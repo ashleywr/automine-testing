@@ -1,0 +1,46 @@
+plugins {
+    id 'fabric-loom' version "${fabric_loom_version}"
+}
+
+base {
+    archivesName = "${mod_id}-fabric-${minecraft_version}"
+}
+
+repositories {
+    maven { url = 'https://maven.fabricmc.net/' }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+}
+
+loom {
+    runs {
+        client {
+            client()
+            configName = 'AutoMine Testing Client (Fabric)'
+            runDir = '../run/client'
+            vmArg '-Dautomine.testing.enabled=true'
+        }
+    }
+}
+
+processResources {
+    def replaceProperties = [
+            version              : project.version,
+            mod_id               : mod_id,
+            mod_name             : mod_name,
+            mod_description      : mod_description,
+            mod_license          : mod_license,
+            mod_authors          : mod_authors,
+            fabric_loader_version: fabric_loader_version,
+            minecraft_version    : minecraft_version
+    ]
+    inputs.properties(replaceProperties)
+    filesMatching('fabric.mod.json') {
+        expand(replaceProperties)
+    }
+}

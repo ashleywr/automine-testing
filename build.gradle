@@ -1,0 +1,39 @@
+// Root project builds nothing. The loader plugins (fabric-loom, moddev) are applied in the
+// subprojects, because applying either here would leak its Minecraft dependency into the other.
+
+plugins {
+    id 'base'
+}
+
+subprojects {
+    apply plugin: 'java-library'
+
+    group = mod_group_id
+    version = mod_version
+
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.release = 21
+    }
+
+    // Shared code lives outside both projects and is compiled into each.
+    sourceSets.main.java.srcDir rootProject.file('common/src/main/java')
+}
+
+// Collect both loader jars where the install scripts can find them.
+tasks.register('collectJars', Copy) {
+    dependsOn ':fabric:build', ':neoforge:build'
+    from(project(':fabric').layout.buildDirectory.dir('libs')) {
+        exclude '*-sources.jar'
+    }
+    from(project(':neoforge').layout.buildDirectory.dir('libs')) {
+        exclude '*-sources.jar'
+    }
+    into layout.buildDirectory.dir('libs')
+}

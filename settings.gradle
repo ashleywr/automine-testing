@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven { url = 'https://maven.fabricmc.net/' }
+        maven { url = 'https://maven.neoforged.net/releases' }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'AutoMineTesting'
+
+// Two loader projects, no common project.
+//
+// The shared sources under common/ are not a subproject: each loader project adds
+// ../common/src/main/java as an extra source directory and compiles it against its own Minecraft
+// jar. That avoids needing a third, vanilla-only toolchain just to compile code that only ever
+// touches vanilla classes, and it keeps the loader-specific code - the entry points, and Fabric's
+// client commands - in exactly one place each.
+include 'fabric'
+include 'neoforge'
