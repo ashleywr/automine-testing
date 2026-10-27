@@ -20,11 +20,9 @@ which avoids needing a third vanilla-only toolchain.
 .\gradlew.bat :neoforge:build      # or :fabric:build, or collectJars for both
 ```
 
-The NeoForge target exists because Synesthesia is NeoForge and ships **Forgified Fabric API**
-(nested in `txnilib`), *not* Sinytra Connector. FFAPI provides Fabric API surfaces; it does not
-load `fabric.mod.json` mods. A Fabric jar dropped into that pack is never mentioned in the log
-again - it simply does not load. `install-into-prism-instance.ps1` now takes `-Loader` and
-refuses the combination that fails silently.
+Use the NeoForge build for NeoForge instances. **Forgified Fabric API** alone does not
+load `fabric.mod.json` mods; it provides API surfaces rather than Fabric mod loading.
+`install-into-prism-instance.ps1` takes `-Loader` and rejects an obvious loader mismatch.
 
 The `/automine` client commands are Fabric-only: they are written against Fabric's
 `ClientCommandManager` and `FabricClientCommandSource`. The HTTP server exposes the same actions
@@ -120,7 +118,7 @@ For a Prism instance, build and deploy the jar that matches its loader:
 
 ```powershell
 .\scripts\install-into-prism-instance.ps1 -InstanceName "Mod Test" -Loader fabric
-.\scripts\install-into-prism-instance.ps1 -InstanceName "Synesthesia" -Loader neoforge
+.\scripts\install-into-prism-instance.ps1 -InstanceName "NeoForge Test" -Loader neoforge
 ```
 
 Launch Prism and wait for AutoMine with one blocking helper. Always pass the
@@ -130,7 +128,7 @@ has cleared and the world is ready for interaction, then prints one JSON result:
 
 ```powershell
 .\scripts\start-prism-instance-and-wait.ps1 `
-  -InstanceName "Synesthesia 2" `
+  -InstanceName "NeoForge Test" `
   -World "New World (1)"
 ```
 
@@ -148,8 +146,8 @@ When a temporary test dependency should be removed, close Minecraft first, then
 remove only AutoMine's jars from that instance:
 
 ```powershell
-.\scripts\remove-from-prism-instance.ps1 -InstanceName "Synesthesia" -WhatIf
-.\scripts\remove-from-prism-instance.ps1 -InstanceName "Synesthesia"
+.\scripts\remove-from-prism-instance.ps1 -InstanceName "NeoForge Test" -WhatIf
+.\scripts\remove-from-prism-instance.ps1 -InstanceName "NeoForge Test"
 ```
 
 Create a deterministic fresh world, then capture RoadWeaver's map with a
